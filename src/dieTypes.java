@@ -20,14 +20,14 @@ import java.util.Arrays;
 
 /** An enumeration of all the types of die available to roll. */
 public enum dieTypes {
-    d3(3,   "d3",  new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 0)),
-    d4(4,   "d4",  new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 1)),
-    d6(6,   "d6",  new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 2)),
-    d8(8,   "d8",  new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 3)),
-    d10(10, "d10", new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 4)),
-    d12(12, "d12", new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 5)),
-    d16(16, "d16", new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 6)),
-    d20(20, "d20", new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 7));
+    d3(3,   new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 0)),
+    d4(4,   new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 1)),
+    d6(6,   new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 2)),
+    d8(8,   new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 3)),
+    d10(10, new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 4)),
+    d12(12, new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 5)),
+    d16(16, new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 6)),
+    d20(20, new JPanel(), (JSpinner) giveCoords(new JSpinner(new SpinnerListModel(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))), 1, 7));
 
     private final int value;
 
@@ -37,13 +37,8 @@ public enum dieTypes {
     /** Panel that displays the random result of a given dieType being rolled. */
     private final JPanel resultPanel;
 
-    // TODO Just derive this from value?
-    /** This dieType's String representation. */
-    private final String asString;
-
-    dieTypes(int value, String asString, JPanel resultPanel, JSpinner controller) {
+    dieTypes(int value, JPanel resultPanel, JSpinner controller) {
         this.value = value;
-        this.asString = asString;
         this.resultPanel = resultPanel;
         this.controller = controller;
     }
@@ -63,7 +58,7 @@ public enum dieTypes {
     @Override
     /** Get a string representation of this dieType. */
     public String toString() {
-        return asString;
+        return "d" + value;
     }
 
     /** Initialize a given component at the point (x, y). */
