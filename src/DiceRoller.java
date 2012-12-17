@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,11 +11,13 @@ import com.dneelyep.utils.GridBagUtils;
 /** Simple program to automatically roll dice in a D and D game. */
 public class DiceRoller extends JFrame {
 
+    private JButton rollButton = new JButton("Roll!");
+
     public static void main(String[] args) {
         new DiceRoller();
     }
 
-    public DiceRoller() {
+    private DiceRoller() {
         super("Dice Roller.");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -32,11 +36,11 @@ public class DiceRoller extends JFrame {
                     (Integer) type.getController().getClientProperty("y")), panel, constraints);
         }
 
-        JButton rollButton = new JButton("Roll!");
         rollButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 roll();
+                rollButton.setEnabled(false);
             }
         });
         GridBagUtils.addAtCoords(rollButton, new Point(0, 8), panel, constraints);
@@ -46,16 +50,50 @@ public class DiceRoller extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reset();
+                rollButton.setEnabled(false);
             }
         });
         GridBagUtils.addAtCoords(resetButton, new Point(1, 8), panel, constraints);
 
+        for (dieTypes type : dieTypes.values()) {
+            type.getController().addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    rollButton.setEnabled(false);
+                    for (dieTypes dieType : dieTypes.values()) {
+                        if ((Integer) dieType.getController().getValue() != 0)
+                            rollButton.setEnabled(true);
+                    }
+                }
+            });
+        }
+
         setVisible(true);
         pack();
+
+        UIDefaults spinnerDefaults = new UIDefaults();
+
+        System.out.println("Properties: " + new JSpinner().getUI().toString());
+        //spinnerDefaults.put("")
+
+/*        sliderDefaults.put("Slider.thumbWidth", 20);
+        sliderDefaults.put("Slider.thumbHeight", 20);
+        sliderDefaults.put("Slider:SliderThumb.backgroundPainter", new Painter() {
+            public void paint(Graphics2D g, JComponent c, int w, int h) {
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setStroke(new BasicStroke(2f));
+                g.setColor(Color.RED);
+                g.fillOval(1, 1, w-3, h-3);
+                g.setColor(Color.WHITE);
+                g.drawOval(1, 1, w-3, h-3);
+            }
+        });*/
+
+        //System.out.println(UIManager.getDefaults());
     }
 
     /** Use the input in the GUI to make a random roll. */
-    public void roll() {
+    private void roll() {
         final JFrame resultsFrame = new JFrame("Roll results");
         JPanel resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
@@ -63,12 +101,19 @@ public class DiceRoller extends JFrame {
         resultsFrame.add(resultsPanel);
 
         for (dieTypes type : dieTypes.values()) {
-            type.getPanel().add(new JLabel(type.toString() + ": "));
-            resultsPanel.add(type.getPanel());
-
             if (!type.getController().getValue().equals(0)) {
-                for (int i = 0; i < (Integer) type.getController().getValue(); i++)
-                    type.getPanel().add(new JLabel(Integer.toString((Math.abs(new Random().nextInt() % type.getValue()) + 1))));
+                type.getPanel().add(new JLabel(type.toString() + ": "));
+                resultsPanel.add(type.getPanel());
+
+                for (int i = 0; i < (Integer) type.getController().getValue(); i++) {
+                    int result = Math.abs(new Random().nextInt() % type.getValue()) + 1;
+
+                    // TODO Switch this to result >= 1 && result <= upper_bound
+                    if ( Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20).contains(result) )
+                        type.getPanel().add(new JLabel(new ImageIcon("res/img/" + result + ".png")));
+                    else
+                        type.getPanel().add(new JLabel(Integer.toString(result)));
+                }
             }
         }
 
@@ -80,6 +125,7 @@ public class DiceRoller extends JFrame {
                     type.getPanel().removeAll();
 
                 resultsFrame.setVisible(false);
+                rollButton.setEnabled(true);
             }
         });
 
