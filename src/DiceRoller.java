@@ -11,7 +11,7 @@ import com.dneelyep.utils.GridBagUtils;
 /** Simple program to automatically roll dice in a D and D game. */
 public class DiceRoller extends JFrame {
 
-    private JButton rollButton = new JButton("Roll!");
+    private final JButton rollButton = new JButton("Roll!");
 
     public static void main(String[] args) {
         new DiceRoller();
@@ -22,6 +22,7 @@ public class DiceRoller extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(255, 228, 209));
         add(panel);
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -29,8 +30,9 @@ public class DiceRoller extends JFrame {
         constraints.ipady = 40;
 
         for (dieTypes type : dieTypes.values()) {
-            GridBagUtils.addAtCoords(new JLabel(type.toString() + ": "),
-                    new Point(0, (Integer) type.getController().getClientProperty("y")), panel, constraints);
+            GridBagUtils.addAtCoords(new JLabel(type.toImage()),
+                    new Point((Integer) type.getController().getClientProperty("x") - 1,
+                            (Integer) type.getController().getClientProperty("y")), panel, constraints);
 
             GridBagUtils.addAtCoords(type.getController(), new Point((Integer) type.getController().getClientProperty("x"),
                     (Integer) type.getController().getClientProperty("y")), panel, constraints);
@@ -43,6 +45,7 @@ public class DiceRoller extends JFrame {
                 rollButton.setEnabled(false);
             }
         });
+        rollButton.setEnabled(false);
         GridBagUtils.addAtCoords(rollButton, new Point(0, 8), panel, constraints);
 
         JButton resetButton = new JButton("Reset");
@@ -61,7 +64,7 @@ public class DiceRoller extends JFrame {
                 public void stateChanged(ChangeEvent e) {
                     rollButton.setEnabled(false);
                     for (dieTypes dieType : dieTypes.values()) {
-                        if ((Integer) dieType.getController().getValue() != 0)
+                        if (dieType.getController().getValue() != 0)
                             rollButton.setEnabled(true);
                     }
                 }
@@ -71,9 +74,9 @@ public class DiceRoller extends JFrame {
         setVisible(true);
         pack();
 
-        UIDefaults spinnerDefaults = new UIDefaults();
+        //UIDefaults spinnerDefaults = new UIDefaults();
 
-        System.out.println("Properties: " + new JSpinner().getUI().toString());
+        //System.out.println("Properties: " + new JSpinner().getUI().toString());
         //spinnerDefaults.put("")
 
 /*        sliderDefaults.put("Slider.thumbWidth", 20);
@@ -102,7 +105,7 @@ public class DiceRoller extends JFrame {
 
         for (dieTypes type : dieTypes.values()) {
             if (!type.getController().getValue().equals(0)) {
-                type.getPanel().add(new JLabel(type.toString() + ": "));
+                type.getPanel().add(new JLabel(type.toImage()));
                 resultsPanel.add(type.getPanel());
 
                 for (int i = 0; i < (Integer) type.getController().getValue(); i++) {
