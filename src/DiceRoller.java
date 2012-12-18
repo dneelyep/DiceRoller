@@ -11,7 +11,7 @@ import com.dneelyep.utils.GridBagUtils;
 /** Simple program to automatically roll dice in a D and D game. */
 public class DiceRoller extends JFrame {
 
-    private final JButton rollButton = new JButton("Roll!");
+    private final JButton rollButton = new JButton(new ImageIcon("res/img/roll.png"));
 
     public static void main(String[] args) {
         new DiceRoller();
@@ -38,25 +38,31 @@ public class DiceRoller extends JFrame {
                     (Integer) type.getController().getClientProperty("y")), panel, constraints);
         }
 
-        rollButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                roll();
-                rollButton.setEnabled(false);
-            }
-        });
+        rollButton.setContentAreaFilled(false);
+        rollButton.setBorderPainted(false);
+        rollButton.setRolloverIcon(new ImageIcon(("res/img/rollRollover.png")));
+                rollButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        roll();
+                        rollButton.setEnabled(false);
+                    }
+                });
         rollButton.setEnabled(false);
         GridBagUtils.addAtCoords(rollButton, new Point(0, 8), panel, constraints);
 
-        JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reset();
-                rollButton.setEnabled(false);
-            }
-        });
-        GridBagUtils.addAtCoords(resetButton, new Point(1, 8), panel, constraints);
+        JButton resetButton = new JButton(new ImageIcon("res/img/reset.png"));
+        resetButton.setContentAreaFilled(false);
+        resetButton.setBorderPainted(false);
+        resetButton.setRolloverIcon(new ImageIcon(("res/img/resetRollover.png")));
+                resetButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        reset();
+                        rollButton.setEnabled(false);
+                    }
+                });
+        GridBagUtils.addAtCoords(resetButton, new Point(2, 8), panel, constraints);
 
         for (dieTypes type : dieTypes.values()) {
             type.getController().addChangeListener(new ChangeListener() {
@@ -103,24 +109,52 @@ public class DiceRoller extends JFrame {
 
         resultsFrame.add(resultsPanel);
 
+        // TODO Replace the Roll/etc buttons with nice-looking images.
         for (dieTypes type : dieTypes.values()) {
             if (!type.getController().getValue().equals(0)) {
                 type.getPanel().add(new JLabel(type.toImage()));
                 resultsPanel.add(type.getPanel());
 
-                for (int i = 0; i < (Integer) type.getController().getValue(); i++) {
-                    int result = Math.abs(new Random().nextInt() % type.getValue()) + 1;
-
-                    // TODO Switch this to result >= 1 && result <= upper_bound
-                    if ( Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20).contains(result) )
-                        type.getPanel().add(new JLabel(new ImageIcon("res/img/" + result + ".png")));
-                    else
-                        type.getPanel().add(new JLabel(Integer.toString(result)));
+                int maxNumber = 0;
+                for (dieTypes dieType : dieTypes.values()) {
+                    if ((Integer) dieType.getController().getValue() > maxNumber)
+                        maxNumber = (Integer) dieType.getController().getValue();
                 }
+
+                // Always add the largest amount of pictures, to keep spacing in the results panel consistent.
+                for (int numPictures = 0; numPictures < maxNumber; numPictures++) {
+                    if (numPictures >= (Integer) type.getController().getValue()) { // Use empty pictures when
+                        type.getPanel().add(new JLabel(new ImageIcon("res/img/empty.png")));
+                    }
+                    else {
+                        int result = Math.abs(new Random().nextInt() % type.getValue()) + 1;
+
+                        if (result >= 1 && result <= 20)
+                            type.getPanel().add(new JLabel(new ImageIcon("res/img/" + result + ".png")));
+
+                            // TODO Is this if else check even needed?
+                        else
+                            type.getPanel().add(new JLabel(Integer.toString(result)));
+                    }
+                }
+
+//                for (int i = 0; i < (Integer) type.getController().getValue(); i++) {
+//                    int result = Math.abs(new Random().nextInt() % type.getValue()) + 1;
+//
+//                    if (result >= 1 && result <= 20)
+//                        type.getPanel().add(new JLabel(new ImageIcon("res/img/" + result + ".png")));
+//
+//                    // TODO Is this if else check even needed?
+//                    else
+//                        type.getPanel().add(new JLabel(Integer.toString(result)));
+//                }
             }
         }
 
-        JButton closeButton = new JButton("Close");
+        JButton closeButton = new JButton(new ImageIcon("res/img/close.png"));
+        closeButton.setRolloverIcon(new ImageIcon("res/img/closeRollover.png"));
+                closeButton.setContentAreaFilled(false);
+        closeButton.setBorderPainted(false);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
